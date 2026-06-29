@@ -1,0 +1,442 @@
+/* filepath: src/app/globals.css */
+/**
+ * NERV LONGINUS WATCH — Global Styles
+ *
+ * Foundation styles, CSS custom properties, and global effects.
+ * All NERV color tokens are defined as CSS variables for use
+ * outside Tailwind context (Three.js, SVG inline styles, etc.)
+ */
+
+/* ── FONT IMPORTS ────────────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech&family=Share+Tech+Mono&family=VT323&family=Noto+Sans+JP:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS CUSTOM PROPERTIES ────────────────────────────────────────────────────────── */
+:root {
+  /* NERV Color Tokens */
+  --void-black: #020304;
+  --terminal-black: #060A0F;
+  --deep-station: #0A0E14;
+  --shadow-grid: #0F1520;
+  --nerv-black: #111820;
+
+  --nerv-orange: #FF6600;
+  --nerv-orange-bright: #FF8C1A;
+  --nerv-orange-dim: #CC5200;
+  --nerv-orange-text: #FFB347;
+
+  --bloodwarn: #CC0000;
+  --bloodwarn-bright: #FF1111;
+  --bloodwarn-mid: #990000;
+  --bloodwarn-text: #FF4444;
+
+  --amber-core: #FFB000;
+  --amber-bright: #FFCC33;
+  --amber-warm: #E89020;
+  --amber-dim: #997700;
+
+  --phosphor: #00FF41;
+  --phosphor-bright: #33FF66;
+  --phosphor-mid: #00CC33;
+  --phosphor-dim: #006614;
+  --p31: #39FF7E;
+
+  --threat-unknown: #9933CC;
+  --magi-white: #E8F0F8;
+  --classified-grey: #4A5566;
+
+  /* Typography */
+  --font-share-tech: 'Share Tech', system-ui, sans-serif;
+  --font-share-tech-mono: 'Share Tech Mono', 'Courier New', monospace;
+  --font-vt323: 'VT323', 'Courier New', monospace;
+
+  /* Screen opacity — manipulated by flicker effect */
+  --screen-opacity: 1;
+}
+
+/* ── BASE RESETS ─────────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+  overflow: hidden; /* No native scrolling — everything is virtualized */
+  background-color: var(--void-black);
+}
+
+body {
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--void-black);
+  color: var(--amber-core);
+  font-family: var(--font-share-tech-mono);
+  /* Apply screen flicker via opacity */
+  opacity: var(--screen-opacity);
+  /* Prevent text selection on UI elements */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection in data/content areas */
+.selectable {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* ── CRT EFFECTS ─────────────────────────────────────────────────────────────────── */
+
+/* Scanline overlay — applied to the root */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* 2px scanline pair: 1px transparent + 1px dark overlay */
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 1px,
+    rgba(0, 0, 0, 0.25) 1px,
+    rgba(0, 0, 0, 0.25) 2px
+  );
+  /* Very slow downward drift */
+  animation: scanline-drift 8s linear infinite;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* CRT vignette — darkened corners/edges */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+  pointer-events: none;
+  z-index: 9997;
+}
+
+/* ── SCROLLBAR STYLING ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--terminal-black);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--nerv-orange-dim);
+  border-radius: 0; /* Hard corners — no consumer aesthetics */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--nerv-orange);
+}
+
+/* ── CUSTOM UTILITIES ────────────────────────────────────────────────────────────── */
+
+/* Phosphor text glow effect */
+.text-glow-phosphor {
+  text-shadow: 0 0 8px var(--phosphor), 0 0 16px rgba(0, 255, 65, 0.3);
+}
+
+.text-glow-amber {
+  text-shadow: 0 0 8px var(--amber-core), 0 0 16px rgba(255, 176, 0, 0.3);
+}
+
+.text-glow-orange {
+  text-shadow: 0 0 8px var(--nerv-orange), 0 0 16px rgba(255, 102, 0, 0.3);
+}
+
+.text-glow-red {
+  text-shadow: 0 0 8px var(--bloodwarn), 0 0 16px rgba(204, 0, 0, 0.4);
+}
+
+/* Terminal text style */
+.terminal-text {
+  font-family: var(--font-vt323);
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+}
+
+/* Classification stamp style */
+.classification-stamp {
+  font-family: var(--font-share-tech-mono);
+  letter-spacing: 0.2em;
+  font-size: 0.65rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Panel border treatment */
+.panel {
+  background-color: var(--terminal-black);
+  border: 1px solid var(--ui-border, #1A2535);
+}
+
+/* NERV header text style */
+.nerv-header {
+  font-family: var(--font-share-tech);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+/* Active glow border */
+.border-glow-orange {
+  box-shadow: 0 0 8px rgba(255, 102, 0, 0.4), inset 0 0 8px rgba(255, 102, 0, 0.05);
+}
+
+.border-glow-red {
+  box-shadow: 0 0 12px rgba(204, 0, 0, 0.5), inset 0 0 12px rgba(204, 0, 0, 0.05);
+}
+
+/* VHS glitch — applies horizontal translation tear */
+.glitch-active {
+  animation: vhs-tear 0.3s steps(1, end) forwards;
+}
+
+@keyframes vhs-tear {
+  0% { transform: none; }
+  15% { transform: translateX(6px) skewX(0.5deg); filter: hue-rotate(10deg); }
+  30% { transform: translateX(-3px); filter: hue-rotate(-10deg); }
+  50% { transform: translateX(4px); filter: none; }
+  65% { transform: none; }
+  80% { transform: translateX(-2px); }
+  100% { transform: none; }
+}
+
+/* ── ADDITIONAL CSS CUSTOM PROPERTIES ───────────────────────────────────────────── */
+:root {
+  --pattern-blue: #0044FF;
+  --pattern-blue-bright: #3366FF;
+  --pattern-blue-mid: #0033CC;
+  --pattern-blue-glow: #4488FF;
+  --bloodwarn-deep: #440000;
+  --phosphor-deep: #002208;
+  --panel-bg: #080C12;
+}
+
+/* ── TEXT SELECTION ──────────────────────────────────────────────────────────────── */
+::selection {
+  background: rgba(255, 102, 0, 0.25);
+  color: var(--amber-bright);
+}
+
+/* ── FILM GRAIN OVERLAY ──────────────────────────────────────────────────────────── */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9996;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  animation: grain-shift 0.4s steps(1) infinite;
+}
+
+/* ── CORNER BRACKET DECORATION ───────────────────────────────────────────────────── */
+.corner-brackets-full {
+  position: relative;
+}
+.corner-brackets-full::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to right, currentColor, currentColor) 0 0 / 10px 1px no-repeat,
+    linear-gradient(to bottom, currentColor, currentColor) 0 0 / 1px 10px no-repeat,
+    linear-gradient(to left, currentColor, currentColor) 100% 0 / 10px 1px no-repeat,
+    linear-gradient(to bottom, currentColor, currentColor) 100% 0 / 1px 10px no-repeat,
+    linear-gradient(to right, currentColor, currentColor) 0 100% / 10px 1px no-repeat,
+    linear-gradient(to top, currentColor, currentColor) 0 100% / 1px 10px no-repeat,
+    linear-gradient(to left, currentColor, currentColor) 100% 100% / 10px 1px no-repeat,
+    linear-gradient(to top, currentColor, currentColor) 100% 100% / 1px 10px no-repeat;
+}
+
+/* ── WARNING / DANGER STRIPE PATTERNS ───────────────────────────────────────────── */
+.warning-stripe {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 176, 0, 0.12) 0px, rgba(255, 176, 0, 0.12) 8px,
+    transparent 8px, transparent 18px
+  );
+}
+
+.danger-stripe {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(204, 0, 0, 0.15) 0px, rgba(204, 0, 0, 0.15) 8px,
+    transparent 8px, transparent 18px
+  );
+}
+
+.pattern-blue-stripe {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(0, 68, 255, 0.12) 0px, rgba(0, 68, 255, 0.12) 8px,
+    transparent 8px, transparent 18px
+  );
+}
+
+/* ── HOLOGRAPHIC PANEL ───────────────────────────────────────────────────────────── */
+.holo-panel {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 65, 0.015) 0%,
+    rgba(4, 6, 10, 0.96) 40%,
+    rgba(4, 6, 10, 0.96) 60%,
+    rgba(0, 255, 65, 0.01) 100%
+  );
+  border: 1px solid rgba(0, 255, 65, 0.15);
+  box-shadow: 0 0 30px rgba(0, 255, 65, 0.04), inset 0 0 40px rgba(0, 255, 65, 0.02);
+}
+
+/* ── RETRO GRID ──────────────────────────────────────────────────────────────────── */
+.retro-grid {
+  background-image:
+    linear-gradient(rgba(26, 37, 53, 0.4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26, 37, 53, 0.4) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ── DOSSIER PANEL ───────────────────────────────────────────────────────────────── */
+.dossier-panel {
+  background: linear-gradient(180deg, rgba(6, 10, 15, 0.98) 0%, rgba(4, 6, 10, 0.99) 100%);
+  border-left: 1px solid rgba(255, 102, 0, 0.3);
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.8), -1px 0 0 rgba(255, 102, 0, 0.1);
+}
+
+/* ── TICKER SCROLL ───────────────────────────────────────────────────────────────── */
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: data-scroll 25s linear infinite;
+}
+.ticker-track:hover { animation-play-state: paused; }
+
+/* ── STATUS LED PING ─────────────────────────────────────────────────────────────── */
+.status-led { position: relative; }
+.status-led::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  animation: status-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* ── TARGETING RETICLE ───────────────────────────────────────────────────────────── */
+.targeting-reticle { position: relative; }
+.targeting-reticle::before, .targeting-reticle::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border: 1px solid rgba(255, 68, 68, 0.35);
+  animation: targeting 2s ease-in-out infinite;
+}
+.targeting-reticle::after {
+  inset: -12px;
+  border-color: rgba(255, 68, 68, 0.12);
+  animation-delay: 0.5s;
+}
+
+/* ── WAVEFORM BARS ───────────────────────────────────────────────────────────────── */
+.waveform-bar {
+  display: inline-block;
+  width: 2px;
+  background: currentColor;
+  transform-origin: bottom;
+  animation: waveform 0.8s ease-in-out infinite;
+}
+.waveform-bar:nth-child(2) { animation-delay: 0.1s; }
+.waveform-bar:nth-child(3) { animation-delay: 0.2s; }
+.waveform-bar:nth-child(4) { animation-delay: 0.15s; }
+.waveform-bar:nth-child(5) { animation-delay: 0.05s; }
+
+/* ── ALERT BODY OVERLAYS ─────────────────────────────────────────────────────────── */
+body.alert-priority-red::after {
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(80, 0, 0, 0.35) 100%);
+}
+body.alert-pattern-blue::after {
+  background:
+    radial-gradient(ellipse at center, transparent 30%, rgba(0, 0, 40, 0.4) 100%),
+    radial-gradient(ellipse 60% 80% at 50% 0%, rgba(0, 68, 255, 0.05) 0%, transparent 100%);
+}
+
+/* ── ADDITIONAL KEYFRAMES ────────────────────────────────────────────────────────── */
+@keyframes scanline-drift {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 4px; }
+}
+
+@keyframes grain-shift {
+  0%   { background-position: 0 0; }
+  10%  { background-position: -8% -6%; }
+  20%  { background-position: 4% 8%; }
+  30%  { background-position: -5% 3%; }
+  40%  { background-position: 9% -4%; }
+  50%  { background-position: -10% 6%; }
+  60%  { background-position: 6% -8%; }
+  70%  { background-position: -3% 5%; }
+  80%  { background-position: 7% -2%; }
+  90%  { background-position: -6% 9%; }
+  100% { background-position: 0 0; }
+}
+
+@keyframes waveform {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+@keyframes status-ping {
+  0% { transform: scale(1); opacity: 0.7; }
+  75%, 100% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes data-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes targeting {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.05); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  41% { opacity: 1; }
+  42% { opacity: 0.65; }
+  43% { opacity: 1; }
+  60% { opacity: 1; }
+  61% { opacity: 0.45; }
+  62% { opacity: 1; }
+}
+
+@keyframes rotate-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
