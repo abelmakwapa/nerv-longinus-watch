@@ -6,8 +6,22 @@
 
 "use client";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, type QueryFunctionContext } from "@tanstack/react-query";
 import { useState } from "react";
+
+/**
+ * Default query function — routes by query key so passive cache consumers can
+ * subscribe to a key (e.g. ["asteroids"]) without each re-declaring a queryFn.
+ * The headless AsteroidFeed still drives the actual polling.
+ */
+async function defaultQueryFn({ queryKey }: QueryFunctionContext) {
+  if (queryKey[0] === "asteroids") {
+    const res = await fetch("/api/asteroids?days=7");
+    if (!res.ok) throw new Error(`API ERROR: ${res.status}`);
+    return res.json();
+  }
+  throw new Error(`No query function defined for key: ${JSON.stringify(queryKey)}`);
+}
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
   // Initialize QueryClient inside useState to prevent sharing across requests in SSR
@@ -16,6 +30,8 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
+            // Fallback fetcher for cache-only consumers (keyed by queryKey)
+            queryFn: defaultQueryFn,
             // Data is considered fresh for 14 minutes (just under the 15-minute refetch interval)
             staleTime: 14 * 60 * 1000,
             // Keep cached data for 1 hour even when no components are subscribed

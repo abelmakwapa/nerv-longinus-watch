@@ -373,6 +373,7 @@ export function AsteroidDossier() {
 
   const { data } = useQuery<AsteroidListResponse>({
     queryKey: ["asteroids"],
+    enabled: false,
     staleTime: 14 * 60 * 1000,
   });
 
@@ -556,7 +557,7 @@ export function AsteroidDossier() {
                   <DataCell
                     label="KINETIC YIELD"
                     value={formatYield(asteroid.threat.kineticYieldMt)}
-                    highlight={asteroid.threat.kineticYieldMt > 50}
+                    highlight={(asteroid.threat.kineticYieldMt ?? 0) > 50}
                   />
                   <DataCell
                     label="YIELD CLASS"

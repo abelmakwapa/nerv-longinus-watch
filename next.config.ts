@@ -29,7 +29,9 @@ const nextConfig: NextConfig = {
               "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: https://api.nasa.gov",
+              "img-src 'self' data: blob: https://api.nasa.gov",
+              // WebGL / Three.js may create texture + shader workers from blobs.
+              "worker-src 'self' blob:",
               "connect-src 'self' https://api.nasa.gov https://ssd-api.jpl.nasa.gov",
             ].join("; "),
           },
